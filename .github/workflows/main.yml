@@ -1,0 +1,41 @@
+on:
+  pull_request_target:
+    types:
+      - closed
+  workflow_dispatch:
+    
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-etl-lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install test dependencies
+        run: python3 -m pip install -r requirements.txt
+      - name: Run unit tests
+        run: python3 -m pytest -v
+      - name: Install Lambda dependencies
+        run: |
+          python3 -m pip install --platform manylinux2014_x86_64 \
+            --target=aws --implementation cp --python-version 3.10 \
+            --only-binary=:all: --upgrade -r requirements-lambda.txt
+      - name: Configure AWS credentials from delon9 account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-west-1
+      - name: Check working directory
+        run: pwd
+      - name: Package CloudFormation template
+        run: aws cloudformation package --template-file infra/cloud-formation.yml --s3-bucket brew-tea-full-bucket-stack --output-template-file brew-tea-full-stack-template-packaged.yml
+      - name: Deploy CloudFormation stack
+        run: aws cloudformation deploy --stack-name brew-tea-full-stack --template-file brew-tea-full-stack-template-packaged.yml --region eu-west-1 --capabilities CAPABILITY_IAM
+

@@ -1,0 +1,89 @@
+Volume (# Total Number of Products Sold)
+    select count(order_items) from transaction_items
+
+Volume (# Number of Products Sold per Day) ***
+    SELECT
+        DATE_TRUNC('day', order_date) AS sales_date,
+        COUNT(*) AS product_count
+    FROM
+        customer_transactions
+    GROUP BY
+        DATE_TRUNC('day', order_date)
+    ORDER BY
+        sales_date;
+
+Bottom 10 Products
+    SELECT DISTINCT order_items, count(order_items)
+    FROM transaction_items
+    GROUP BY order_items
+    ORDER BY count(*) ASC
+    LIMIT 10;
+
+Top 10 Products
+    SELECT DISTINCT order_items, count(order_items)
+    FROM transaction_items
+    GROUP BY order_items
+    ORDER BY count(*) DESC
+    LIMIT 10;
+
+Total Unique Orders
+    SELECT COUNT(DISTINCT order_items) AS total_unique_orders
+    FROM transaction_items;
+
+Total Number of Stores
+    SELECT COUNT(location_id) AS num_of_locations
+    FROM location;
+
+Top 10 Performing Stores
+    SELECT l.location_name, COUNT(*) AS total_sales
+    FROM customer_transactions ct
+    JOIN location l ON ct.location_id = l.location_id
+    GROUP BY l.location_name LIMIT 10;
+
+Revenue per Branch
+    SELECT
+    location.location_name,
+    DATE_TRUNC('day', ct.order_date) AS timescale,
+    SUM(ct.total_amount) AS revenue
+    FROM
+    customer_transactions ct
+    JOIN
+    location ON ct.location_id = location.location_id
+    GROUP BY
+    location.location_name, timescale
+    ORDER BY timescale ASC
+
+Static Sales
+    SELECT
+        SUM(CASE WHEN DATE_TRUNC('day', order_date) = CURRENT_DATE THEN total_amount ELSE 0 END) AS today_sales,
+        SUM(CASE WHEN DATE_TRUNC('day', order_date) = CURRENT_DATE - INTERVAL '1 day' THEN total_amount ELSE 0 END) AS yesterday_sales
+    FROM customer_transactions;
+
+Most Valuable customers
+    SELECT c.customer_name, ct.total_amount
+    FROM customers AS c
+    JOIN customer_transactions AS ct ON c.customer_id = ct.customer_id
+    ORDER BY ct.total_amount DESC;
+
+Return Customer Count per location
+    SELECT COUNT(ti.transaction_id) - COUNT(DISTINCT ti.transaction_id) AS num_of_returning_customers, lc.location_name
+    FROM transaction_items ti
+    JOIN customer_transactions ct ON ct.transaction_id = ti.transaction_id 
+    JOIN location lc ON lc.location_id = ct.location_id
+    GROUP BY lc.location_name;
+
+Total Return Customer Count
+    SELECT COUNT(ti.transaction_id) - COUNT(DISTINCT ti.transaction_id) AS num_of_returning_customers
+    FROM transaction_items ti;
+
+Total Number of Cash vs Card Payments
+    SELECT payment_method, COUNT(*) AS total_sales
+    FROM customer_transactions
+    GROUP BY payment_method;
+
+Total Number of Items Sold per location
+    SELECT lc.location_name, COUNT(ti.transaction_items_id)
+    FROM customer_transactions ct
+    JOIN location lc ON lc.location_id = ct.location_id
+    JOIN transaction_items ti ON ti.transaction_id = ct.transaction_id
+    GROUP BY lc.location_name
