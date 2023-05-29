@@ -1,5 +1,3 @@
-from database.connect_to_db import *
-
 def create_db_tables(connection, cursor) -> True or False:
     print('create_db_tables started')
     try: 
@@ -45,6 +43,7 @@ def create_db_tables(connection, cursor) -> True or False:
         print('...committed')
         print('create_db_tables successfull')
         return True
+    
     except Exception as ex:
         print(f'create_db_tables failed to generate table/s:\n{ex}')
         return False

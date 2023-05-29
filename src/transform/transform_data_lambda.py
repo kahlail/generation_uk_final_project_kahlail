@@ -1,10 +1,8 @@
-from format_date_lambda import format_date_time
-
-def transform_raw_data(data, key):
+def transform_raw_data(data, key, format_date_func):
     i = 0
     print(f'transform_raw_data started, key = {key}')
     
-    con_data = format_date_time(data)
+    con_data = format_date_func(data)
     
     try:
         transformed_list = []
