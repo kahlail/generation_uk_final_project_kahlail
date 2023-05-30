@@ -1,5 +1,3 @@
-from connect_to_db import *
-
 def load_data_into_database(list_of_dicts: list, cursor, connection) -> True or False:
     i = 0
     try:

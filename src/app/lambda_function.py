@@ -3,7 +3,8 @@ from extract.extract_data_lambda import extract_csv
 from transform.transform_data_lambda import transform_raw_data
 from transform.format_date_lambda import format_date_time
 from load.generate_sql_db import create_db_tables
-from load.load_clean_data_into_db import load_data_into_database, return_id
+from load.load_clean_data_into_db import load_data_into_database
+from load.return_target_id import return_id
 
 def lambda_handler(event, handler):
 

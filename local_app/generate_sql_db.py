@@ -1,5 +1,3 @@
-from connect_to_db import *
-
 def create_db_tables(connection, cursor) -> True or False:
     try: 
         print('...creating location')
@@ -50,6 +48,3 @@ def create_db_tables(connection, cursor) -> True or False:
         print(f'Failed to generate table/s:\n{ex}')
         return False
         
-if __name__ == "__main__":
-    con, cur = open_sql_database_connection_and_cursor()
-    create_db_tables(con, cur)

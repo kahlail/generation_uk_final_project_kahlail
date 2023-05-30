@@ -36,7 +36,8 @@ def create_db_tables(connection, cursor) -> True or False:
         CREATE TABLE IF NOT EXISTS transaction_items (
             transaction_items_id INT IDENTITY(1, 1) PRIMARY KEY,
             transaction_id INT NOT NULL,
-            order_items VARCHAR(250)
+            order_items VARCHAR(250),
+            order_price DECIMAL (6,2) NOT NULL
         );
         """)
         connection.commit()

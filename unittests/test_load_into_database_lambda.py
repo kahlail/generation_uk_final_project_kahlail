@@ -6,7 +6,8 @@ def test_load_data_into_database():
         {'Date Time': '2044-04-04 16:40:00', 
          'Location': 'London Covent Garden', 
          'Name': 'test_case_1', 
-         'Order': ['order string 1'], 
+         'Order': ['order string 1'],
+         'Order Price': ['2.5'],
          'Total': 2.5, 
          'Payment Method': 'CARD'},
 
@@ -14,6 +15,7 @@ def test_load_data_into_database():
          'Location': 'Chesterfield', 
          'Name': 'test_case_2', 
          'Order': ['order string 2', 'order string 3'], 
+         'Order Price': ['2.5', '2.5'],
          'Total': 5.0, 
          'Payment Method': 'CARD'},
 
@@ -21,6 +23,7 @@ def test_load_data_into_database():
          'Location': 'Bristol', 
          'Name': 'test_case_3', 
          'Order': ['order string 4', 'order string 5', 'order string 6'], 
+         'Order Price': ['2.5', '2.5', '2.5'],
          'Total': 7.5, 
          'Payment Method': 'CARD'},
     ]
@@ -33,8 +36,9 @@ def test_load_data_into_database():
 
     expected_result = True, 3
     actual_result = load_data_into_database(mock_list_of_dicts, mock_connection, mock_cursor, mock_key, mock_return_id_func)
-    
+
     assert expected_result == actual_result
-    assert mock_cursor.execute.call_count == 12
+    assert mock_cursor.execute.call_count == 6
+    assert mock_cursor.executemany.call_count == 3
     assert mock_connection.commit.call_count == 3
     
